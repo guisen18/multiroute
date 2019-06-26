@@ -16,11 +16,12 @@ done
 NICnum=$(ip link list|grep UP|wc -l);
 NICnum=$((NICnum-2));
 #source gateway
-sgw=192.168.1.1
-sCIDR=$sgw/24
+#sgw=192.168.1.1
+#sCIDR=$sgw/24
+sCIDR=$(ip route |grep -v via |grep $intranetNIC|awk '{print $1}'|sed 's/\.[0-9]*\//\.1\//g')
 #destination gateway
-dgw=192.168.100.1
-
+#dgw=192.168.100.1
+dgw=$(ip route |grep -v $intranetNIC|awk 'NR == 1{print $1}'|sed 's/\.[0-9]*\//\.1\//g')
 if [ "$NICnum" -lt "1" ];then
         echo "the num of NIC is less than 2";
         exit 1;
