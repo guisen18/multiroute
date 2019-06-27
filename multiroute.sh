@@ -13,17 +13,17 @@ do
         fi
 done
 
-NICnum=$(ip link list|grep UP|wc -l);
-NICnum=$((NICnum-2));
+NICnum=$(ip link list|grep UP|wc -l)
+NICnum=$((NICnum-2))
 
 #source gateway
-#sgw=192.168.1.1
-#sCIDR=$sgw/24
+#sgw=172.30.16.0
+#sCIDR=172.30.
 sgw=$(ip route |grep -v via |grep $intranetNIC|awk -F '/' '{print $1}'|sed 's/\.[0-9]*$/\.1/g')
 sCIDR=$(ip route |grep -v via |grep $intranetNIC|awk '{print $1}')
 
 #destination gateway
-#dgw=192.168.100.1
+#dgw=172.30.0.1
 dgw=$(ip route |grep -v $intranetNIC|awk -F '/' 'NR == 1{print $1}'|sed 's/\.[0-9]*$/\.1/g')
 dCIDR=$(ip route |grep -v $intranetNIC|awk 'NR == 1{print $1}')
 
@@ -34,9 +34,10 @@ fi
 
 for i in $(seq 1 $((NICnum)))
 do
+
         iptables -t mangle -N ETH$i
 
-        iptables -t mangle -A ETH$i -j MARK --set-mark $((i+5))
+        iptables -t mangle -A ETH$i -j MARK --set-mark $i
 
         iptables -t mangle -A ETH$i -j CONNMARK --save-mark
 
@@ -47,9 +48,11 @@ iptables -t mangle -A OUTPUT -s $sCIDR -m state --state ESTABLISHED,RELATED -j C
 
 for i in $(seq 1 $((NICnum)))
 do
-        ip rule add fwmark 0x$((i+5)) table 10$i
+        hex=$(printf %x $i)
 
-        ip route add table 10$i default via $dgw dev ${arr[$((i-1))]}
+        ip rule add fwmark 0x$hex table $((100+$i))
+
+        ip route add table $((100+$i)) default via $dgw dev ${arr[$((i-1))]}
 
         iptables -t nat -A POSTROUTING -s $sCIDR -o ${arr[$((i-1))]} -j MASQUERADE
 
@@ -62,8 +65,6 @@ echo 0 > /proc/sys/net/ipv4/conf/default/rp_filter
 echo 0 > /proc/sys/net/ipv4/conf/all/rp_filter
 
 echo 0 > /proc/sys/net/ipv4/conf/$intranetNIC/rp_filter
-
-exit 0
 
 
 
