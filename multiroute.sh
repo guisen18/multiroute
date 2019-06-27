@@ -70,6 +70,7 @@ echo 0 > /proc/sys/net/ipv4/conf/$intranetNIC/rp_filter
 
 
 ##安装php解释器
+apt-get update -y
 apt install php-cli -y;
 #服务安装目录
 path="/root";
