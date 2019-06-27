@@ -1,5 +1,7 @@
 #!/bin/bash
-dgw=192.168.100.1
+intranetNIC=$(ip route|awk '/^default/{print $5}')
+dgw=$(ip route |grep -v $intranetNIC|awk -F '/' 'NR == 1{print $1}'|sed 's/\.[0-9]*$/\.1/g')
+
 NICnum=$(ip link list|grep UP|wc -l);
 NICnum=$((NICnum-2));
 iptables -t mangle -F
