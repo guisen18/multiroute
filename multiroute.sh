@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 intranetNIC=$(ip route|awk '/^default/{print $5}')
 lo="lo"
 num=0
