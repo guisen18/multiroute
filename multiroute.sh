@@ -17,13 +17,10 @@ NICnum=$(ip link list|grep UP|wc -l)
 NICnum=$((NICnum-2))
 
 #source gateway
-#sgw=172.30.16.0
-#sCIDR=172.30.
 sgw=$(ip route |grep -v via |grep $intranetNIC|awk -F '/' '{print $1}'|sed 's/\.[0-9]*$/\.1/g')
 sCIDR=$(ip route |grep -v via |grep $intranetNIC|awk '{print $1}')
 
 #destination gateway
-#dgw=172.30.0.1
 dgw=$(ip route |grep -v $intranetNIC|awk -F '/' 'NR == 1{print $1}'|sed 's/\.[0-9]*$/\.1/g')
 dCIDR=$(ip route |grep -v $intranetNIC|awk 'NR == 1{print $1}')
 
