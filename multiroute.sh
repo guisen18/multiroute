@@ -95,7 +95,6 @@ ans=`find $path -name php-http-proxy`;
 if [ "$ans" == "" ];then
         cd $path;
         git clone https://github.com/walkor/php-http-proxy;
-        composer install;
 fi
 
 #启动socks5代理
