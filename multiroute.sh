@@ -87,14 +87,15 @@ if [ "$ans" == "" ];then
                 chmod a+x composer;
                 mv composer /usr/bin/composer;
                 composer config -g repo.packgist composer https://packagist.phpcomposer.com;
-                composer install;
         fi
+        composer install;
 fi
 #检查http代理服务是否安装
 ans=`find $path -name php-http-proxy`;
 if [ "$ans" == "" ];then
         cd $path;
         git clone https://github.com/walkor/php-http-proxy;
+        composer install;
 fi
 
 #启动socks5代理
